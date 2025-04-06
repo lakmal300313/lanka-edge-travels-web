@@ -1,1282 +1,375 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Lanka Edge Travels | Premium Sri Lanka Experiences</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/controls/OrbitControls.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.min.js"></script>
-  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <style>
-    :root {
-      --primary: #2563eb;
-      --secondary: #1e40af;
-      --accent: #f59e0b;
-    }
-    
-    .hidden-section { display: none; }
-    .language-btn.active { 
-      background: var(--primary);
-      color: white;
-      padding: 0.25rem 0.5rem;
-      border-radius: 0.25rem;
-    }
-    
-    /* Custom scrollbar */
-    ::-webkit-scrollbar {
-      width: 8px;
-    }
-    ::-webkit-scrollbar-track {
-      background: #f1f1f1;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: var(--primary);
-      border-radius: 4px;
-    }
-    
-    /* Gradient text */
-    .gradient-text {
-      background: linear-gradient(45deg, var(--primary), var(--accent));
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-    }
-    
-    /* 3D card effect */
-    .card-3d {
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    .card-3d:hover {
-      transform: translateY(-10px);
-      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-    }
-    
-    /* Floating animation */
-    @keyframes float {
-      0% { transform: translateY(0px); }
-      50% { transform: translateY(-10px); }
-      100% { transform: translateY(0px); }
-    }
-    .floating {
-      animation: float 6s ease-in-out infinite;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lanka Edge Travels | Premium Sri Lanka Tours & Experiences</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <style>
+        .hero-bg {
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), 
+                        url('https://images.unsplash.com/photo-1528181304800-259b08848526?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');
+            background-size: cover;
+            background-position: center;
+        }
+        .tour-card:hover .tour-image {
+            transform: scale(1.05);
+        }
+        .testimonial-card {
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+    </style>
 </head>
-<body class="bg-gray-50 text-gray-800 font-sans antialiased">
-  <!-- 3D Background -->
-  <div id="threejs-bg" class="fixed top-0 left-0 w-full h-full -z-10 opacity-20"></div>
-  
-  <!-- Language Switch -->
-  <div class="fixed top-4 right-4 z-50 flex space-x-2 bg-white/80 backdrop-blur-sm rounded-full p-1 shadow-lg">
-    <button onclick="switchLanguage('en')" class="language-btn active text-xs px-3 py-1 rounded-full transition-all" id="lang-en">EN</button>
-    <button onclick="switchLanguage('si')" class="language-btn text-xs px-3 py-1 rounded-full transition-all" id="lang-si">සිංහල</button>
-  </div>
-  
-  <!-- Header -->
-  <header class="relative bg-gradient-to-br from-blue-900 to-blue-700 text-white text-center py-12 shadow-lg overflow-hidden">
-    <div class="absolute inset-0 bg-black/20"></div>
-    <div class="relative z-10">
-      <h1 class="text-5xl md:text-6xl font-bold mb-4 gradient-text">Lanka Edge Travels</h1>
-      <p class="text-xl md:text-2xl font-light mb-6" data-lang-en="Your Premium Sri Lanka Travel Experience" data-lang-si="ශ්‍රී ලංකාවේ විශිෂ්ඨ සංචාරක අත්දැකීම්">Your Premium Sri Lanka Travel Experience</p>
-      <div class="flex justify-center space-x-4">
-        <button class="bg-white text-blue-900 px-6 py-2 rounded-full font-medium hover:bg-gray-100 transition-all flex items-center">
-          <i class="fas fa-play-circle mr-2"></i>
-          <span data-lang-en="Watch Video" data-lang-si="වීඩියෝව බලන්න">Watch Video</span>
-        </button>
-        <button onclick="showPage('contact')" class="border-2 border-white text-white px-6 py-2 rounded-full font-medium hover:bg-white/10 transition-all">
-          <span data-lang-en="Contact Us" data-lang-si="අපව අමතන්න">Contact Us</span>
-        </button>
-      </div>
-    </div>
-    <div class="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-gray-50 to-transparent"></div>
-  </header>
-  
-  <!-- Navigation -->
-  <nav class="sticky top-0 z-40 bg-white/80 backdrop-blur-sm shadow-md">
-    <div class="container mx-auto px-6 py-3 flex justify-between items-center">
-      <div class="text-xl font-bold text-blue-900">Lanka<span class="text-orange-400">Edge</span></div>
-      <div class="hidden md:flex space-x-8">
-        <button onclick="showPage('home')" class="nav-link active" data-page="home">
-          <span data-lang-en="Home" data-lang-si="මුල් පිටුව">Home</span>
-        </button>
-        <button onclick="showPage('places')" class="nav-link" data-page="places">
-          <span data-lang-en="Destinations" data-lang-si="ගමනාන්ත">Destinations</span>
-        </button>
-        <button onclick="showPage('tours')" class="nav-link" data-page="tours">
-          <span data-lang-en="Tours" data-lang-si="සංචාර">Tours</span>
-        </button>
-        <button onclick="showPage('culture')" class="nav-link" data-page="culture">
-          <span data-lang-en="Culture" data-lang-si="සංස්කෘතිය">Culture</span>
-        </button>
-        <button onclick="showPage('contact')" class="nav-link" data-page="contact">
-          <span data-lang-en="Contact" data-lang-si="සම්බන්ධ කරන්න">Contact</span>
-        </button>
-      </div>
-      <button class="md:hidden text-blue-900" id="mobile-menu-button">
-        <i class="fas fa-bars text-2xl"></i>
-      </button>
-    </div>
-    
-    <!-- Mobile Menu -->
-    <div class="md:hidden hidden bg-white w-full py-2 px-4 shadow-lg" id="mobile-menu">
-      <button onclick="showPage('home')" class="block w-full text-left py-2 nav-link-mobile active" data-page="home">Home</button>
-      <button onclick="showPage('places')" class="block w-full text-left py-2 nav-link-mobile" data-page="places">Destinations</button>
-      <button onclick="showPage('tours')" class="block w-full text-left py-2 nav-link-mobile" data-page="tours">Tours</button>
-      <button onclick="showPage('culture')" class="block w-full text-left py-2 nav-link-mobile" data-page="culture">Culture</button>
-      <button onclick="showPage('contact')" class="block w-full text-left py-2 nav-link-mobile" data-page="contact">Contact</button>
-    </div>
-  </nav>
-  
-  <!-- Main Content -->
-  <main class="container mx-auto px-4 py-8">
-    <!-- Home Section -->
-    <section id="home" class="active-section" data-aos="fade-up">
-      <!-- Hero Stats -->
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
-        <div class="bg-white p-6 rounded-xl shadow-md text-center">
-          <div class="text-3xl font-bold text-blue-900">8</div>
-          <div class="text-gray-600" data-lang-en="UNESCO Sites" data-lang-si="යුනෙස්කෝ අඩවි">UNESCO Sites</div>
+<body class="font-sans text-gray-800">
+    <!-- Header/Navigation -->
+    <header class="fixed w-full bg-white shadow-md z-50">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center">
+              <a href="#" class="text-4xl font-bold text-blue-900">Lanka<span class="text-orange-500">Edge</span>Travels</a>
+            </div>
+            <nav class="hidden md:flex space-x-8">
+                <a href="#tours" class="font-medium hover:text-orange-500">Tours</a>
+                <a href="#destinations" class="font-medium hover:text-orange-500">Destinations</a>
+                <a href="#experiences" class="font-medium hover:text-orange-500">Experiences</a>
+                <a href="#about" class="font-medium hover:text-orange-500">About Us</a>
+                <a href="#contact" class="font-medium hover:text-orange-500">Contact</a>
+            </nav>
+            <div class="flex items-center space-x-4">
+                <a href="tel:+94112345678" class="hidden md:flex items-center text-blue-900">
+                    <i class="fas fa-phone-alt mr-2"></i>
+                    +94 11 234 5678
+                </a>
+                <button class="md:hidden text-2xl">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
         </div>
-        <div class="bg-white p-6 rounded-xl shadow-md text-center">
-          <div class="text-3xl font-bold text-blue-900">1,340</div>
-          <div class="text-gray-600" data-lang-en="Km of Coastline" data-lang-si="කි.මී. වෙරළ තීරය">Km of Coastline</div>
-        </div>
-        <div class="bg-white p-6 rounded-xl shadow-md text-center">
-          <div class="text-3xl font-bold text-blue-900">25+</div>
-          <div class="text-gray-600" data-lang-en="National Parks" data-lang-si="ජාතික වනෝද්‍යාන">National Parks</div>
-        </div>
-        <div class="bg-white p-6 rounded-xl shadow-md text-center">
-          <div class="text-3xl font-bold text-blue-900">2,500+</div>
-          <div class="text-gray-600" data-lang-en="Years of History" data-lang-si="වසර ඉතිහාසය">Years of History</div>
-        </div>
-      </div>
-      
-      <!-- Featured Section -->
-      <div class="mb-16">
-        <h2 class="text-3xl font-bold mb-6 text-center" data-lang-en="Why Choose Sri Lanka?" data-lang-si="ඇයි ශ්‍රී ලංකාව තෝරන්නේ?">Why Choose Sri Lanka?</h2>
-        <div class="grid md:grid-cols-3 gap-8">
-          <div class="bg-white rounded-xl shadow-lg overflow-hidden card-3d">
-            <img src="https://source.unsplash.com/600x400/?sri-lanka,wildlife" class="w-full h-48 object-cover" alt="Wildlife">
-            <div class="p-6">
-              <h3 class="text-xl font-semibold mb-2" data-lang-en="Diverse Wildlife" data-lang-si="විවිධ වනජීවීන්">Diverse Wildlife</h3>
-              <p class="text-gray-600" data-lang-en="Home to leopards, elephants, and hundreds of bird species in their natural habitats." data-lang-si="කොටියන්, අලින් සහ සිය ගණනක් පක්ෂි විශේෂ වාසය කරන ස්වාභාවික වාසස්ථාන.">Home to leopards, elephants, and hundreds of bird species in their natural habitats.</p>
-            </div>
-          </div>
-          <div class="bg-white rounded-xl shadow-lg overflow-hidden card-3d">
-            <img src="https://source.unsplash.com/600x400/?sri-lanka,beach" class="w-full h-48 object-cover" alt="Beaches">
-            <div class="p-6">
-              <h3 class="text-xl font-semibold mb-2" data-lang-en="Pristine Beaches" data-lang-si="පිරිසිදු වෙරළ">Pristine Beaches</h3>
-              <p class="text-gray-600" data-lang-en="Golden sandy beaches with crystal clear waters perfect for relaxation and water sports." data-lang-si="ස්ඵටික පැහැදිලි ජලය සහිත රන් වැලි වෙරළන් විවේකය සහ ජල ක්‍රීඩා සඳහා පරිපූර්ණයි.">Golden sandy beaches with crystal clear waters perfect for relaxation and water sports.</p>
-            </div>
-          </div>
-          <div class="bg-white rounded-xl shadow-lg overflow-hidden card-3d">
-            <img src="https://source.unsplash.com/600x400/?sri-lanka,tea" class="w-full h-48 object-cover" alt="Culture">
-            <div class="p-6">
-              <h3 class="text-xl font-semibold mb-2" data-lang-en="Rich Culture" data-lang-si="පොහොසත් සංස්කෘතිය">Rich Culture</h3>
-              <p class="text-gray-600" data-lang-en="Ancient temples, vibrant festivals, and warm hospitality that will captivate your heart." data-lang-si="පුරාණ දේවාල, ජීවන්ත උත්සව සහ උණුසුම් අමුත්තන්ට සැලකීම ඔබේ හදවත ඇල්ලීමට සූදානම්.">Ancient temples, vibrant festivals, and warm hospitality that will captivate your heart.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <!-- Interactive Map Preview -->
-      <div class="mb-16 bg-white rounded-xl shadow-lg overflow-hidden">
-        <div class="grid md:grid-cols-2">
-          <div class="p-8">
-            <h2 class="text-3xl font-bold mb-4" data-lang-en="Explore Our Interactive Map" data-lang-si="අන්තර්ක්‍රියාකාරී සිතියම ගවේෂණය කරන්න">Explore Our Interactive Map</h2>
-            <p class="text-gray-600 mb-6" data-lang-en="Discover Sri Lanka's hidden gems with our custom-built interactive map. Filter by interests, find local guides, and plan your perfect itinerary." data-lang-si="අපගේ අභිරුචි අන්තර්ක්‍රියාකාරී සිතියම සමඟ ශ්‍රී ලංකාවේ සැඟවුණු මැණික් සොයා ගන්න. උනන්දුව අනුව පෙරහන් කරන්න, දේශීය මාර්ගෝපදේශකයින් සොයා ගන්න, සහ ඔබේ පරිපූර්ණ ගමන් මාර්ගය සැලසුම් කරන්න.">Discover Sri Lanka's hidden gems with our custom-built interactive map. Filter by interests, find local guides, and plan your perfect itinerary.</p>
-            <button class="bg-blue-900 text-white px-6 py-3 rounded-lg hover:bg-blue-800 transition-all flex items-center">
-              <i class="fas fa-map-marked-alt mr-2"></i>
-              <span data-lang-en="Launch Map Explorer" data-lang-si="සිතියම් ගවේෂකය අරඹන්න">Launch Map Explorer</span>
-            </button>
-          </div>
-          <div class="relative h-64 md:h-full">
-            <img src="https://source.unsplash.com/800x600/?sri-lanka,map" class="w-full h-full object-cover" alt="Sri Lanka Map">
-            <div class="absolute inset-0 bg-gradient-to-r from-white/80 to-transparent md:hidden"></div>
-          </div>
-        </div>
-      </div>
-      
-      <!-- Testimonials -->
-      <div class="mb-16">
-        <h2 class="text-3xl font-bold mb-8 text-center" data-lang-en="Traveler Experiences" data-lang-si="සංචාරක අත්දැකීම්">Traveler Experiences</h2>
-        <div class="grid md:grid-cols-3 gap-8">
-          <div class="bg-white p-6 rounded-xl shadow-md">
-            <div class="flex items-center mb-4">
-              <img src="https://randomuser.me/api/portraits/women/32.jpg" class="w-12 h-12 rounded-full mr-4" alt="Sarah">
-              <div>
-                <h4 class="font-semibold">Sarah Johnson</h4>
-                <div class="flex text-yellow-400">
-                  <i class="fas fa-star"></i>
-                  <i class="fas fa-star"></i>
-                  <i class="fas fa-star"></i>
-                  <i class="fas fa-star"></i>
-                  <i class="fas fa-star"></i>
-                </div>
-              </div>
-            </div>
-            <p class="text-gray-600 italic" data-lang-en="The cultural tour was absolutely breathtaking. Our guide was incredibly knowledgeable and showed us parts of Sri Lanka we would never have discovered on our own." data-lang-si="සංස්කෘතික සංචාරය ඇත්තෙන්ම හුස්ම හිරවන සුළුයි. අපගේ මාර්ගෝපදේශකයා ඉතා දැනුම්වත් වූ අතර අපි තනිවම සොයාගත නොහැකි ශ්‍රී ලංකාවේ කොටස් අපට පෙන්වා දුන්නේය.">The cultural tour was absolutely breathtaking. Our guide was incredibly knowledgeable and showed us parts of Sri Lanka we would never have discovered on our own.</p>
-          </div>
-          <div class="bg-white p-6 rounded-xl shadow-md">
-            <div class="flex items-center mb-4">
-              <img src="https://randomuser.me/api/portraits/men/45.jpg" class="w-12 h-12 rounded-full mr-4" alt="Michael">
-              <div>
-                <h4 class="font-semibold">Michael Chen</h4>
-                <div class="flex text-yellow-400">
-                  <i class="fas fa-star"></i>
-                  <i class="fas fa-star"></i>
-                  <i class="fas fa-star"></i>
-                  <i class="fas fa-star"></i>
-                  <i class="fas fa-star-half-alt"></i>
-                </div>
-              </div>
-            </div>
-            <p class="text-gray-600 italic" data-lang-en="The wildlife safari was the highlight of our trip. Seeing elephants and leopards in their natural habitat was unforgettable." data-lang-si="වනජීවී සංචාරය අපගේ ගමනේ උච්චස්ථානය විය. ස්වාභාවික වාසස්ථානයේ අලින් සහ කොටියන් දැකීම අමතක නොවන සුළුය.">The wildlife safari was the highlight of our trip. Seeing elephants and leopards in their natural habitat was unforgettable.</p>
-          </div>
-          <div class="bg-white p-6 rounded-xl shadow-md">
-            <div class="flex items-center mb-4">
-              <img src="https://randomuser.me/api/portraits/women/68.jpg" class="w-12 h-12 rounded-full mr-4" alt="Priya">
-              <div>
-                <h4 class="font-semibold">Priya Patel</h4>
-                <div class="flex text-yellow-400">
-                  <i class="fas fa-star"></i>
-                  <i class="fas fa-star"></i>
-                  <i class="fas fa-star"></i>
-                  <i class="fas fa-star"></i>
-                  <i class="fas fa-star"></i>
-                </div>
-              </div>
-            </div>
-            <p class="text-gray-600 italic" data-lang-en="The beaches were paradise! Lanka Edge helped us find secluded spots away from the crowds. Perfect honeymoon!" data-lang-si="වෙරළ පරදීපයක් විය! ලංකා එජ් අපට ජනගහනයෙන් ඈත්වූ සුන්දර ස්ථාන සොයා ගැනීමට උපකාරී විය. පරිපූර්ණ මධුමාසිකය!" data-lang-ta="கடற்கரைகள் சொர்க்கம் போன்றவை! லங்கா எட்ஜ் நமக்கு கூட்டத்திலிருந்து விலகி இருக்கும் அமைதியான இடங்களை கண்டுபிடிக்க உதவியது. சரியான தேனிலவு!">The beaches were paradise! Lanka Edge helped us find secluded spots away from the crowds. Perfect honeymoon!</p>
-          </div>
-        </div>
-      </div>
-    </section>
-    
-    <!-- Places Section -->
-    <section id="places" class="hidden-section" data-aos="fade-up">
-      <h2 class="text-3xl font-bold mb-8 text-center" data-lang-en="Discover Sri Lanka" data-lang-si="ශ්‍රී ලංකාව සොයා බලන්න">Discover Sri Lanka</h2>
-      
-      <!-- Destination Categories -->
-      <div class="flex overflow-x-auto pb-4 mb-8 scrollbar-hide">
-        <button class="destination-category active px-6 py-2 whitespace-nowrap" data-category="all">All</button>
-        <button class="destination-category px-6 py-2 whitespace-nowrap" data-category="beaches" data-lang-en="Beaches" data-lang-si="වෙරළ">Beaches</button>
-        <button class="destination-category px-6 py-2 whitespace-nowrap" data-category="cultural" data-lang-en="Cultural" data-lang-si="සංස්කෘතික">Cultural</button>
-        <button class="destination-category px-6 py-2 whitespace-nowrap" data-category="wildlife" data-lang-en="Wildlife" data-lang-si="වනජීවී">Wildlife</button>
-        <button class="destination-category px-6 py-2 whitespace-nowrap" data-category="hiking" data-lang-en="Hiking" data-lang-si="හයිකින්">Hiking</button>
-        <button class="destination-category px-6 py-2 whitespace-nowrap" data-category="tea" data-lang-en="Tea Country" data-lang-si="තේ කඳුකරය">Tea Country</button>
-      </div>
-      
-      <!-- Destinations Grid -->
-      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-        <!-- Destination 1 -->
-        <div class="destination-card bg-white rounded-xl shadow-lg overflow-hidden card-3d" data-category="cultural">
-          <div class="relative h-64 overflow-hidden">
-            <img src="https://source.unsplash.com/600x400/?sigiriya" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110" alt="Sigiriya">
-            <div class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent">
-              <h3 class="text-xl font-bold text-white">Sigiriya</h3>
-              <div class="flex text-yellow-400 text-sm">
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star-half-alt"></i>
-                <span class="text-white ml-2">4.7</span>
-              </div>
-            </div>
-          </div>
-          <div class="p-6">
-            <div class="flex flex-wrap gap-2 mb-4">
-              <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">UNESCO</span>
-              <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">Historical</span>
-              <span class="bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded">Hiking</span>
-            </div>
-            <p class="text-gray-600 mb-4" data-lang-en="Ancient rock fortress with stunning frescoes and panoramic views." data-lang-si="අතිශයින්ම සුන්දර චිත්‍ර සහ පරිශ්‍රම දර්ශන සහිත පුරාණ ගල් බලකොටුව.">Ancient rock fortress with stunning frescoes and panoramic views.</p>
-            <div class="flex justify-between items-center">
-              <span class="text-blue-900 font-semibold">$25-50</span>
-              <button class="text-blue-900 hover:text-blue-700 flex items-center">
-                <span data-lang-en="Explore" data-lang-si="ගවේෂණය">Explore</span>
-                <i class="fas fa-arrow-right ml-1"></i>
-              </button>
-            </div>
-          </div>
-        </div>
-        
-        <!-- Destination 2 -->
-        <div class="destination-card bg-white rounded-xl shadow-lg overflow-hidden card-3d" data-category="beaches">
-          <div class="relative h-64 overflow-hidden">
-            <img src="https://source.unsplash.com/600x400/?mirissa,sri-lanka" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110" alt="Mirissa">
-            <div class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent">
-              <h3 class="text-xl font-bold text-white">Mirissa</h3>
-              <div class="flex text-yellow-400 text-sm">
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <span class="text-white ml-2">4.9</span>
-              </div>
-            </div>
-          </div>
-          <div class="p-6">
-            <div class="flex flex-wrap gap-2 mb-4">
-              <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">Beach</span>
-              <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">Whale Watching</span>
-              <span class="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded">Sunset</span>
-            </div>
-            <p class="text-gray-600 mb-4" data-lang-en="Tropical paradise with golden beaches and excellent whale watching opportunities." data-lang-si="රන් වැලි වෙරළන් සහ විශිෂ්ජ තල්මසුන් නැරඹීමේ අවස්ථා සහිත නිවර්තන පරදීපය.">Tropical paradise with golden beaches and excellent whale watching opportunities.</p>
-            <div class="flex justify-between items-center">
-              <span class="text-blue-900 font-semibold">$15-40</span>
-              <button class="text-blue-900 hover:text-blue-700 flex items-center">
-                <span data-lang-en="Explore" data-lang-si="ගවේෂණය">Explore</span>
-                <i class="fas fa-arrow-right ml-1"></i>
-              </button>
-            </div>
-          </div>
-        </div>
-        
-        <!-- Destination 3 -->
-        <div class="destination-card bg-white rounded-xl shadow-lg overflow-hidden card-3d" data-category="wildlife">
-          <div class="relative h-64 overflow-hidden">
-            <img src="https://source.unsplash.com/600x400/?yala,sri-lanka" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110" alt="Yala">
-            <div class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent">
-              <h3 class="text-xl font-bold text-white">Yala National Park</h3>
-              <div class="flex text-yellow-400 text-sm">
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <span class="text-white ml-2">4.8</span>
-              </div>
-            </div>
-          </div>
-          <div class="p-6">
-            <div class="flex flex-wrap gap-2 mb-4">
-              <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">Safari</span>
-              <span class="bg-brown-100 text-brown-800 text-xs px-2 py-1 rounded">Leopards</span>
-              <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">Elephants</span>
-            </div>
-            <p class="text-gray-600 mb-4" data-lang-en="Best place to spot leopards in the wild with diverse ecosystems." data-lang-si="විවිධ පරිසර පද්ධති සහිත වල් තුල කොටියන් දැකීමට හොඳම ස්ථානය.">Best place to spot leopards in the wild with diverse ecosystems.</p>
-            <div class="flex justify-between items-center">
-              <span class="text-blue-900 font-semibold">$30-60</span>
-              <button class="text-blue-900 hover:text-blue-700 flex items-center">
-                <span data-lang-en="Explore" data-lang-si="ගවේෂණය">Explore</span>
-                <i class="fas fa-arrow-right ml-1"></i>
-              </button>
-            </div>
-          </div>
-        </div>
-        
-        <!-- Destination 4 -->
-        <div class="destination-card bg-white rounded-xl shadow-lg overflow-hidden card-3d" data-category="hiking">
-          <div class="relative h-64 overflow-hidden">
-            <img src="https://source.unsplash.com/600x400/?ella,sri-lanka" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110" alt="Ella">
-            <div class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent">
-              <h3 class="text-xl font-bold text-white">Ella</h3>
-              <div class="flex text-yellow-400 text-sm">
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star-half-alt"></i>
-                <span class="text-white ml-2">4.6</span>
-              </div>
-            </div>
-          </div>
-          <div class="p-6">
-            <div class="flex flex-wrap gap-2 mb-4">
-              <span class="bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded">Hiking</span>
-              <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">Waterfalls</span>
-              <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">Scenic</span>
-            </div>
-            <p class="text-gray-600 mb-4" data-lang-en="Mountain town with breathtaking hikes to waterfalls and viewpoints." data-lang-si="ජලධරා සහ දර්ශනාවලියට ගමන් කිරීම සඳහා හුස්ම හිරවන සුළු කඳුකර නගරය.">Mountain town with breathtaking hikes to waterfalls and viewpoints.</p>
-            <div class="flex justify-between items-center">
-              <span class="text-blue-900 font-semibold">$10-30</span>
-              <button class="text-blue-900 hover:text-blue-700 flex items-center">
-                <span data-lang-en="Explore" data-lang-si="ගවේෂණය">Explore</span>
-                <i class="fas fa-arrow-right ml-1"></i>
-              </button>
-            </div>
-          </div>
-        </div>
-        
-        <!-- Destination 5 -->
-        <div class="destination-card bg-white rounded-xl shadow-lg overflow-hidden card-3d" data-category="tea">
-          <div class="relative h-64 overflow-hidden">
-            <img src="https://source.unsplash.com/600x400/?nuwara-eliya" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110" alt="Nuwara Eliya">
-            <div class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent">
-              <h3 class="text-xl font-bold text-white">Nuwara Eliya</h3>
-              <div class="flex text-yellow-400 text-sm">
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <span class="text-white ml-2">4.7</span>
-              </div>
-            </div>
-          </div>
-          <div class="p-6">
-            <div class="flex flex-wrap gap-2 mb-4">
-              <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">Tea</span>
-              <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">Cool Climate</span>
-              <span class="bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded">Colonial</span>
-            </div>
-            <p class="text-gray-600 mb-4" data-lang-en="Little England with tea plantations, colonial architecture, and cool climate." data-lang-si="තේ වතු, යටත්විජිත ගෘහ නිර්මාණ ශිල්පය සහ සිසිල් කාලගුණය සහිත කුඩා එංගලන්තය.">Little England with tea plantations, colonial architecture, and cool climate.</p>
-            <div class="flex justify-between items-center">
-              <span class="text-blue-900 font-semibold">$20-45</span>
-              <button class="text-blue-900 hover:text-blue-700 flex items-center">
-                <span data-lang-en="Explore" data-lang-si="ගවේෂණය">Explore</span>
-                <i class="fas fa-arrow-right ml-1"></i>
-              </button>
-            </div>
-          </div>
-        </div>
-        
-        <!-- Destination 6 -->
-        <div class="destination-card bg-white rounded-xl shadow-lg overflow-hidden card-3d" data-category="cultural">
-          <div class="relative h-64 overflow-hidden">
-            <img src="https://source.unsplash.com/600x400/?anuradhapura" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110" alt="Anuradhapura">
-            <div class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent">
-              <h3 class="text-xl font-bold text-white">Anuradhapura</h3>
-              <div class="flex text-yellow-400 text-sm">
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star"></i>
-                <i class="fas fa-star-half-alt"></i>
-                <span class="text-white ml-2">4.5</span>
-              </div>
-            </div>
-          </div>
-          <div class="p-6">
-            <div class="flex flex-wrap gap-2 mb-4">
-              <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">UNESCO</span>
-              <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">Ancient</span>
-              <span class="bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded">Sacred</span>
-            </div>
-            <p class="text-gray-600 mb-4" data-lang-en="Ancient capital with sacred Buddhist sites dating back over 2,000 years." data-lang-si="වසර 2,000 කට වැඩි කාලයක් පැරණි පුජනීය බෞද්ධ ස්ථාන සහිත පුරාණ අගනුවර.">Ancient capital with sacred Buddhist sites dating back over 2,000 years.</p>
-            <div class="flex justify-between items-center">
-              <span class="text-blue-900 font-semibold">$15-35</span>
-              <button class="text-blue-900 hover:text-blue-700 flex items-center">
-                <span data-lang-en="Explore" data-lang-si="ගවේෂණය">Explore</span>
-                <i class="fas fa-arrow-right ml-1"></i>
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <!-- View More Button -->
-      <div class="text-center mt-12">
-        <button class="bg-blue-900 text-white px-8 py-3 rounded-full hover:bg-blue-800 transition-all">
-          <span data-lang-en="View All Destinations" data-lang-si="සියලුම ගමනාන්ත බලන්න">View All Destinations</span>
-        </button>
-      </div>
-    </section>
-    
-    <!-- Tours Section -->
-    <section id="tours" class="hidden-section" data-aos="fade-up">
-      <h2 class="text-3xl font-bold mb-8 text-center" data-lang-en="Curated Experiences" data-lang-si="විශේෂිත අත්දැකීම්">Curated Experiences</h2>
-      
-      <!-- Tour Filters -->
-      <div class="bg-white rounded-xl shadow-md p-6 mb-8">
-        <div class="grid md:grid-cols-4 gap-4">
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1" data-lang-en="Duration" data-lang-si="කාල සීමාව">Duration</label>
-            <select class="w-full border border-gray-300 rounded-lg px-3 py-2">
-              <option data-lang-en="Any" data-lang-si="ඕනෑම">Any</option>
-              <option data-lang-en="1-3 days" data-lang-si="1-3 දින">1-3 days</option>
-              <option data-lang-en="4-7 days" data-lang-si="4-7 දින">4-7 days</option>
-              <option data-lang-en="1-2 weeks" data-lang-si="1-2 සති">1-2 weeks</option>
-            </select>
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1" data-lang-en="Travel Style" data-lang-si="ගමන් විලාසිතාව">Travel Style</label>
-            <select class="w-full border border-gray-300 rounded-lg px-3 py-2">
-              <option data-lang-en="Any" data-lang-si="ඕනෑම">Any</option>
-              <option data-lang-en="Adventure" data-lang-si="වික්‍රමාන්විත">Adventure</option>
-              <option data-lang-en="Luxury" data-lang-si="විලාසිතා">Luxury</option>
-              <option data-lang-en="Family" data-lang-si="පවුල්">Family</option>
-            </select>
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1" data-lang-en="Price Range" data-lang-si="මිල පරාසය">Price Range</label>
-            <select class="w-full border border-gray-300 rounded-lg px-3 py-2">
-              <option data-lang-en="Any" data-lang-si="ඕනෑම">Any</option>
-              <option data-lang-en="$0-500" data-lang-si="$0-500">$0-500</option>
-              <option data-lang-en="$500-1000" data-lang-si="$500-1000">$500-1000</option>
-              <option data-lang-en="$1000+" data-lang-si="$1000+">$1000+</option>
-            </select>
-          </div>
-          <div class="flex items-end">
-            <button class="w-full bg-blue-900 text-white py-2 rounded-lg hover:bg-blue-800 transition-all">
-              <span data-lang-en="Filter" data-lang-si="පෙරහන්">Filter</span>
-            </button>
-          </div>
-        </div>
-      </div>
-      
-      <!-- Tours Grid -->
-      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-        <!-- Tour 1 -->
-        <div class="bg-white rounded-xl shadow-lg overflow-hidden card-3d">
-          <div class="relative h-64 overflow-hidden">
-            <img src="https://source.unsplash.com/600x400/?sri-lanka,safari" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110" alt="Wildlife Safari">
-            <div class="absolute top-4 right-4 bg-orange-500 text-white px-3 py-1 rounded-full text-xs font-bold">
-              <span data-lang-en="BESTSELLER" data-lang-si="වැඩිපුරම අලෙවි">BESTSELLER</span>
-            </div>
-          </div>
-          <div class="p-6">
-            <h3 class="text-xl font-bold mb-2" data-lang-en="Wildlife Explorer" data-lang-si="වනජීවී ගවේෂක">Wildlife Explorer</h3>
-            <div class="flex items-center text-gray-600 text-sm mb-4">
-              <i class="fas fa-map-marker-alt mr-1"></i>
-              <span data-lang-en="Yala, Wilpattu, Udawalawe" data-lang-si="යාල, විල්පත්තු, උඩවලවේ">Yala, Wilpattu, Udawalawe</span>
-            </div>
-            <p class="text-gray-600 mb-4" data-lang-en="5-day safari adventure spotting leopards, elephants, and exotic birds." data-lang-si="කොටියන්, අලින් සහ විදේශීය පක්ෂින් දැකීම සඳහා දින 5 ක සංචාරක ගවේෂණය.">5-day safari adventure spotting leopards, elephants, and exotic birds.</p>
-            <div class="flex justify-between items-center">
-              <div>
-                <span class="text-blue-900 font-bold text-lg">$850</span>
-                <span class="text-gray-500 text-sm ml-1" data-lang-en="per person" data-lang-si="පුද්ගලයෙකුට">per person</span>
-              </div>
-              <button class="bg-blue-900 text-white px-4 py-2 rounded-lg hover:bg-blue-800 transition-all text-sm">
-                <span data-lang-en="Book Now" data-lang-si="දැන් වෙන්කරන්න">Book Now</span>
-              </button>
-            </div>
-          </div>
-        </div>
-        
-        <!-- Tour 2 -->
-        <div class="bg-white rounded-xl shadow-lg overflow-hidden card-3d">
-          <div class="relative h-64 overflow-hidden">
-            <img src="https://source.unsplash.com/600x400/?sri-lanka,beach" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110" alt="Beach Holiday">
-            <div class="absolute top-4 right-4 bg-blue-500 text-white px-3 py-1 rounded-full text-xs font-bold">
-              <span data-lang-en="POPULAR" data-lang-si="ජනප්‍රිය">POPULAR</span>
-            </div>
-          </div>
-          <div class="p-6">
-            <h3 class="text-xl font-bold mb-2" data-lang-en="Coastal Paradise" data-lang-si="වෙරළ ගමන">Coastal Paradise</h3>
-            <div class="flex items-center text-gray-600 text-sm mb-4">
-              <i class="fas fa-map-marker-alt mr-1"></i>
-              <span data-lang-en="Mirissa, Unawatuna, Bentota" data-lang-si="මිරිස්ස, උණවටුන, බෙන්තොට">Mirissa, Unawatuna, Bentota</span>
-            </div>
-            <p class="text-gray-600 mb-4" data-lang-en="7-day beach hopping with whale watching, snorkeling, and sunset cocktails." data-lang-si="තල්මසුන් නැරඹීම, ස්නෝකලින් සහ සූර්යාස්තමය සාමර්ස් සමඟ දින 7 ක වෙරළ ගමන.">7-day beach hopping with whale watching, snorkeling, and sunset cocktails.</p>
-            <div class="flex justify-between items-center">
-              <div>
-                <span class="text-blue-900 font-bold text-lg">$1,200</span>
-                <span class="text-gray-500 text-sm ml-1" data-lang-en="per person" data-lang-si="පුද්ගලයෙකුට">per person</span>
-              </div>
-              <button class="bg-blue-900 text-white px-4 py-2 rounded-lg hover:bg-blue-800 transition-all text-sm">
-                <span data-lang-en="Book Now" data-lang-si="දැන් වෙන්කරන්න">Book Now</span>
-              </button>
-            </div>
-          </div>
-        </div>
-        
-        <!-- Tour 3 -->
-        <div class="bg-white rounded-xl shadow-lg overflow-hidden card-3d">
-          <div class="relative h-64 overflow-hidden">
-            <img src="https://source.unsplash.com/600x400/?sri-lanka,temple" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110" alt="Cultural Tour">
-          </div>
-          <div class="p-6">
-            <h3 class="text-xl font-bold mb-2" data-lang-en="Cultural Triangle" data-lang-si="සංස්කෘතික ත්‍රිකෝණය">Cultural Triangle</h3>
-            <div class="flex items-center text-gray-600 text-sm mb-4">
-              <i class="fas fa-map-marker-alt mr-1"></i>
-              <span data-lang-en="Anuradhapura, Polonnaruwa, Sigiriya" data-lang-si="අනුරාධපුර, පොළොන්නරුව, සීගිරිය">Anuradhapura, Polonnaruwa, Sigiriya</span>
-            </div>
-            <p class="text-gray-600 mb-4" data-lang-en="4-day journey through ancient kingdoms and UNESCO World Heritage sites." data-lang-si="පුරාණ රාජධානි සහ යුනෙස්කෝ ලෝක උරුම අඩවි හරහා දින 4 ක ගමන.">4-day journey through ancient kingdoms and UNESCO World Heritage sites.</p>
-            <div class="flex justify-between items-center">
-              <div>
-                <span class="text-blue-900 font-bold text-lg">$650</span>
-                <span class="text-gray-500 text-sm ml-1" data-lang-en="per person" data-lang-si="පුද්ගලයෙකුට">per person</span>
-              </div>
-              <button class="bg-blue-900 text-white px-4 py-2 rounded-lg hover:bg-blue-800 transition-all text-sm">
-                <span data-lang-en="Book Now" data-lang-si="දැන් වෙන්කරන්න">Book Now</span>
-              </button>
-            </div>
-          </div>
-        </div>
-        
-        <!-- Tour 4 -->
-        <div class="bg-white rounded-xl shadow-lg overflow-hidden card-3d">
-          <div class="relative h-64 overflow-hidden">
-            <img src="https://source.unsplash.com/600x400/?sri-lanka,tea" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110" alt="Tea Country">
-          </div>
-          <div class="p-6">
-            <h3 class="text-xl font-bold mb-2" data-lang-en="Tea Trails" data-lang-si="තේ මාර්ග">Tea Trails</h3>
-            <div class="flex items-center text-gray-600 text-sm mb-4">
-              <i class="fas fa-map-marker-alt mr-1"></i>
-              <span data-lang-en="Nuwara Eliya, Ella, Haputale" data-lang-si="නුවරඑළිය, ඇල්ල, හපුතලේ">Nuwara Eliya, Ella, Haputale</span>
-            </div>
-            <p class="text-gray-600 mb-4" data-lang-en="3-day exploration of tea plantations, waterfalls, and scenic train rides." data-lang-si="තේ වතු, ජලධරා සහ දර්ශනීය දුම්රිය ගමන් සහිත දින 3 ක ගවේෂණය.">3-day exploration of tea plantations, waterfalls, and scenic train rides.</p>
-            <div class="flex justify-between items-center">
-              <div>
-                <span class="text-blue-900 font-bold text-lg">$450</span>
-                <span class="text-gray-500 text-sm ml-1" data-lang-en="per person" data-lang-si="පුද්ගලයෙකුට">per person</span>
-              </div>
-              <button class="bg-blue-900 text-white px-4 py-2 rounded-lg hover:bg-blue-800 transition-all text-sm">
-                <span data-lang-en="Book Now" data-lang-si="දැන් වෙන්කරන්න">Book Now</span>
-              </button>
-            </div>
-          </div>
-        </div>
-        
-        <!-- Tour 5 -->
-        <div class="bg-white rounded-xl shadow-lg overflow-hidden card-3d">
-          <div class="relative h-64 overflow-hidden">
-            <img src="https://source.unsplash.com/600x400/?sri-lanka,hiking" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110" alt="Adventure Trek">
-            <div class="absolute top-4 right-4 bg-green-500 text-white px-3 py-1 rounded-full text-xs font-bold">
-              <span data-lang-en="NEW" data-lang-si="අලුත්">NEW</span>
-            </div>
-          </div>
-          <div class="p-6">
-            <h3 class="text-xl font-bold mb-2" data-lang-en="Mountain Trekker" data-lang-si="පර්වත ගමන්කරු">Mountain Trekker</h3>
-            <div class="flex items-center text-gray-600 text-sm mb-4">
-              <i class="fas fa-map-marker-alt mr-1"></i>
-              <span data-lang-en="Adam's Peak, Knuckles Range" data-lang-si="ශ්‍රී පාද, නකල්ස් පරාල">Adam's Peak, Knuckles Range</span>
-            </div>
-            <p class="text-gray-600 mb-4" data-lang-en="5-day challenging hikes through misty mountains and cloud forests." data-lang-si="අඳුරු කඳු සහ වලාකුළු වනාන්තර හරහා දින 5 ක අභියෝගාත්මක ගමන්.">5-day challenging hikes through misty mountains and cloud forests.</p>
-            <div class="flex justify-between items-center">
-              <div>
-                <span class="text-blue-900 font-bold text-lg">$750</span>
-                <span class="text-gray-500 text-sm ml-1" data-lang-en="per person" data-lang-si="පුද්ගලයෙකුට">per person</span>
-              </div>
-              <button class="bg-blue-900 text-white px-4 py-2 rounded-lg hover:bg-blue-800 transition-all text-sm">
-                <span data-lang-en="Book Now" data-lang-si="දැන් වෙන්කරන්න">Book Now</span>
-              </button>
-            </div>
-          </div>
-        </div>
-        
-        <!-- Tour 6 -->
-        <div class="bg-white rounded-xl shadow-lg overflow-hidden card-3d">
-          <div class="relative h-64 overflow-hidden">
-            <img src="https://source.unsplash.com/600x400/?sri-lanka,luxury" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110" alt="Luxury Escape">
-          </div>
-          <div class="p-6">
-            <h3 class="text-xl font-bold mb-2" data-lang-en="Luxury Escape" data-lang-si="විලාසිතා නිවාඩු">Luxury Escape</h3>
-            <div class="flex items-center text-gray-600 text-sm mb-4">
-              <i class="fas fa-map-marker-alt mr-1"></i>
-              <span data-lang-en="Colombo, Galle, Tangalle" data-lang-si="කොළඹ, ගාල්ල, තංගල්ල">Colombo, Galle, Tangalle</span>
-            </div>
-            <p class="text-gray-600 mb-4" data-lang-en="7-day premium experience with 5-star resorts, private tours, and spa treatments." data-lang-si="5-තාරකා ගෙවතු, පෞද්ගලික සංචාර සහ ස්පා චිකිත්සා සමඟ දින 7 ක විශේෂ අත්දැකීම.">7-day premium experience with 5-star resorts, private tours, and spa treatments.</p>
-            <div class="flex justify-between items-center">
-              <div>
-                <span class="text-blue-900 font-bold text-lg">$2,500</span>
-                <span class="text-gray-500 text-sm ml-1" data-lang-en="per person" data-lang-si="පුද්ගලයෙකුට">per person</span>
-              </div>
-              <button class="bg-blue-900 text-white px-4 py-2 rounded-lg hover:bg-blue-800 transition-all text-sm">
-                <span data-lang-en="Book Now" data-lang-si="දැන් වෙන්කරන්න">Book Now</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <!-- Custom Tour CTA -->
-      <div class="bg-gradient-to-r from-blue-900 to-blue-700 rounded-xl shadow-lg overflow-hidden mt-12">
-        <div class="grid md:grid-cols-2">
-          <div class="p-8 text-white">
-            <h2 class="text-3xl font-bold mb-4" data-lang-en="Tailor-Made Adventure" data-lang-si="අභිරුචි ගවේෂණය">Tailor-Made Adventure</h2>
-            <p class="mb-6" data-lang-en="Can't find what you're looking for? Our travel experts will design a personalized itinerary just for you." data-lang-si="ඔබ සොයන දේ සොයාගත නොහැකිද? අපගේ සංචාරක විශේෂඥයන් ඔබ වෙනුවෙන් අභිරුචි ගමන් මාර්ගයක් සකස් කරනු ඇත.">Can't find what you're looking for? Our travel experts will design a personalized itinerary just for you.</p>
-            <button class="bg-white text-blue-900 px-6 py-3 rounded-lg hover:bg-gray-100 transition-all">
-              <span data-lang-en="Request Custom Tour" data-lang-si="අභිරුචි සංචාරයක් ඉල්ලන්න">Request Custom Tour</span>
-            </button>
-          </div>
-          <div class="hidden md:block relative">
-            <img src="https://source.unsplash.com/800x600/?sri-lanka,custom,tour" class="w-full h-full object-cover" alt="Custom Tour">
-            <div class="absolute inset-0 bg-gradient-to-l from-blue-900/80 to-transparent"></div>
-          </div>
-        </div>
-      </div>
-    </section>
-    
-    <!-- Culture Section -->
-    <section id="culture" class="hidden-section" data-aos="fade-up">
-      <h2 class="text-3xl font-bold mb-8 text-center" data-lang-en="Sri Lankan Culture" data-lang-si="ශ්‍රී ලාංකික සංස්කෘතිය">Sri Lankan Culture</h2>
-      
-      <!-- Culture Tabs -->
-      <div class="flex overflow-x-auto pb-4 mb-8 scrollbar-hide">
-        <button class="culture-tab active px-6 py-2 whitespace-nowrap" data-tab="heritage" data-lang-en="Heritage" data-lang-si="උරුමය">Heritage</button>
-        <button class="culture-tab px-6 py-2 whitespace-nowrap" data-tab="festivals" data-lang-en="Festivals" data-lang-si="උත්සව">Festivals</button>
-        <button class="culture-tab px-6 py-2 whitespace-nowrap" data-tab="cuisine" data-lang-en="Cuisine" data-lang-si="පාන්තර">Cuisine</button>
-        <button class="culture-tab px-6 py-2 whitespace-nowrap" data-tab="arts" data-lang-en="Arts" data-lang-si="කලා">Arts</button>
-        <button class="culture-tab px-6 py-2 whitespace-nowrap" data-tab="traditions" data-lang-en="Traditions" data-lang-si="පරම්පරා">Traditions</button>
-      </div>
-      
-      <!-- Heritage Content -->
-      <div class="culture-content active" data-content="heritage">
-        <div class="grid md:grid-cols-2 gap-8 mb-12">
-          <div>
-            <h3 class="text-2xl font-bold mb-4" data-lang-en="Ancient Civilizations" data-lang-si="පුරාණ ශිෂ්ටාචාර">Ancient Civilizations</h3>
-            <p class="text-gray-600 mb-4" data-lang-en="Sri Lanka's history dates back over 2,500 years, with ancient kingdoms like Anuradhapura and Polonnaruwa leaving behind magnificent ruins, stupas, and irrigation systems that still amaze engineers today." data-lang-si="ශ්‍රී ලංකාවේ ඉතිහාසය වසර 2,500 කට වැඩි කාලයක් පුරා විහිදෙන අතර, අනුරාධපුර සහ පොළොන්නරුව වැනි පුරාණ රාජධානි විසින් මහා බලවතුන්, ස්තූප සහ ජලාශ පද්ධති අතරෙන් අද ඉංජිනේරුවන් පවා අතුරුදහන් කරයි.">Sri Lanka's history dates back over 2,500 years, with ancient kingdoms like Anuradhapura and Polonnaruwa leaving behind magnificent ruins, stupas, and irrigation systems that still amaze engineers today.</p>
-            <p class="text-gray-600" data-lang-en="The island boasts eight UNESCO World Heritage Sites, including the sacred city of Kandy, the old town of Galle, and the Golden Temple of Dambulla." data-lang-si="මෙම දූපතට යුනෙස්කෝ ලෝක උරුම අඩවි අටක් ඇතුළත් වන අතර, ඒවායින් පූජනීය මහනුවර නගරය, පැරණි ගාල්ල නගරය සහ දඹුල්ල රන් මන්දිරය ඇතුළත් වේ.">The island boasts eight UNESCO World Heritage Sites, including the sacred city of Kandy, the old town of Galle, and the Golden Temple of Dambulla.</p>
-          </div>
-          <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-            <img src="https://source.unsplash.com/800x600/?sri-lanka,ancient" class="w-full h-full object-cover" alt="Ancient Sri Lanka">
-          </div>
-        </div>
-        
-        <div class="grid md:grid-cols-3 gap-8">
-          <div class="bg-white rounded-xl shadow-lg overflow-hidden card-3d">
-            <img src="https://source.unsplash.com/600x400/?sri-lanka,buddha" class="w-full h-48 object-cover" alt="Buddhism">
-            <div class="p-6">
-              <h4 class="font-bold mb-2" data-lang-en="Buddhism" data-lang-si="බුද්ධාගම">Buddhism</h4>
-              <p class="text-gray-600 text-sm" data-lang-en="Theravada Buddhism shapes much of Sri Lankan culture, with temples and rituals playing a central role in daily life." data-lang-si="ථෙරවාද බුද්ධාගම ශ්‍රී ලාංකික සංස්කෘතියේ විශාල කොටසක් සාදයි, දේවාල සහ චාරිත්‍ර දෛනික ජීවිතයේ මධ්‍යස්ථානයක් ගනී.">Theravada Buddhism shapes much of Sri Lankan culture, with temples and rituals playing a central role in daily life.</p>
-            </div>
-          </div>
-          <div class="bg-white rounded-xl shadow-lg overflow-hidden card-3d">
-            <img src="https://source.unsplash.com/600x400/?sri-lanka,colonial" class="w-full h-48 object-cover" alt="Colonial Influence">
-            <div class="p-6">
-              <h4 class="font-bold mb-2" data-lang-en="Colonial Influence" data-lang-si="යටත්විජිත බලපෑම">Colonial Influence</h4>
-              <p class="text-gray-600 text-sm" data-lang-en="Portuguese, Dutch, and British rule left architectural and cultural marks evident in food, language, and buildings." data-lang-si="පෘතුගීසි, ලන්දේසි සහ බ්‍රිතාන්ය පාලනය වාස්තු විද්‍යාත්මක හා සංස්කෘතික සලකුණු ආහාර, භාෂාව සහ ගොඩනැගිලි වල පැහැදිලිව පෙනේ.">Portuguese, Dutch, and British rule left architectural and cultural marks evident in food, language, and buildings.</p>
-            </div>
-          </div>
-          <div class="bg-white rounded-xl shadow-lg overflow-hidden card-3d">
-            <img src="https://source.unsplash.com/600x400/?sri-lanka,architecture" class="w-full h-48 object-cover" alt="Architecture">
-            <div class="p-6">
-              <h4 class="font-bold mb-2" data-lang-en="Architecture" data-lang-si="ගෘහ නිර්මාණ ශිල්පය">Architecture</h4>
-              <p class="text-gray-600 text-sm" data-lang-en="From ancient stupas to colonial forts, Sri Lankan architecture reflects its diverse history and cultural influences." data-lang-si="පුරාණ ස්තූප වලින් යටත්විජිත බලකොටු දක්වා, ශ්‍රී ලාංකික ගෘහ නිර්මාණ ශිල්පය එහි විවිධ ඉතිහාසය සහ සංස්කෘතික බලපෑම් පිළිබිඹු කරයි.">From ancient stupas to colonial forts, Sri Lankan architecture reflects its diverse history and cultural influences.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <!-- Festivals Content -->
-      <div class="culture-content hidden" data-content="festivals">
-        <div class="grid md:grid-cols-2 gap-8 mb-12">
-          <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-            <img src="https://source.unsplash.com/800x600/?sri-lanka,perahera" class="w-full h-full object-cover" alt="Kandy Esala Perahera">
-          </div>
-          <div>
-            <h3 class="text-2xl font-bold mb-4" data-lang-en="Vibrant Festivals" data-lang-si="ජීවන්ත උත්සව">Vibrant Festivals</h3>
-            <p class="text-gray-600 mb-4" data-lang-en="Sri Lanka's calendar is filled with colorful festivals that showcase its multicultural society. The Kandy Esala Perahera, a 10-day Buddhist festival featuring traditional dancers, drummers, and decorated elephants, is one of Asia's most spectacular pageants." data-lang-si="ශ්‍රී ලංකාවේ දින දර්ශනය එහි බහු සංස්කෘතික සමාජය ප්‍රදර්ශනය කරන වර්ණවත් උත්සව වලින් පිරී ඇත. සාම්ප්‍රදායික නර්තන ශිල්පීන්, බෙර වාදකයන් සහ සැරසිලි සහිත අලින් ඇතුළත් දින 10 ක බෞද්ධ උත්සවයක් වන මහනුවර ඇසල පෙරහර ආසියාවේ වඩාත් විශිෂ්ඨ පෙරහර වලින් එකකි.">Sri Lanka's calendar is filled with colorful festivals that showcase its multicultural society. The Kandy Esala Perahera, a 10-day Buddhist festival featuring traditional dancers, drummers, and decorated elephants, is one of Asia's most spectacular pageants.</p>
-            <p class="text-gray-600" data-lang-en="Other major celebrations include Sinhala and Tamil New Year in April, Vesak (Buddha's birthday), Deepavali, and Christmas, reflecting the island's religious diversity." data-lang-si="අනෙකුත් ප්‍රධාන සැමරුම් අතර අප්‍රේල් මාසයේ සිංහල හා දෙමළ අලුත් අවුරුද්ද, වෙසක් (බුදුන් වහන්සේගේ උපන් දිනය), දීපාවලි සහ නත්තල ඇතුළත් වන අතර ඒවා දූපතේ ආගමික විවිධත්වය පිළිබිඹු කරයි.">Other major celebrations include Sinhala and Tamil New Year in April, Vesak (Buddha's birthday), Deepavali, and Christmas, reflecting the island's religious diversity.</p>
-          </div>
-        </div>
-        
-        <div class="grid md:grid-cols-3 gap-8">
-          <div class="bg-white rounded-xl shadow-lg overflow-hidden card-3d">
-            <img src="https://source.unsplash.com/600x400/?sri-lanka,vesak" class="w-full h-48 object-cover" alt="Vesak">
-            <div class="p-6">
-              <h4 class="font-bold mb-2" data-lang-en="Vesak" data-lang-si="වෙසක්">Vesak</h4>
-              <p class="text-gray-600 text-sm" data-lang-en="Celebrating Buddha's birth, enlightenment, and passing, marked by lanterns, pandals, and free food stalls." data-lang-si="බුදුන් වහන්සේගේ උපත, බුද්ධත්වය සහ පරිනිර්වාණය සමරනු ලබන අතර එය ලාම්පු, පන්ඩල් සහ නිදහස් ආහාර බඩු ගෙවතු මගින් සලකුණු කරයි.">Celebrating Buddha's birth, enlightenment, and passing, marked by lanterns, pandals, and free food stalls.</p>
-            </div>
-          </div>
-          <div class="bg-white rounded-xl shadow-lg overflow-hidden card-3d">
-            <img src="https://source.unsplash.com/600x400/?sri-lanka,new-year" class="w-full h-48 object-cover" alt="New Year">
-            <div class="p-6">
-              <h4 class="font-bold mb-2" data-lang-en="Sinhala & Tamil New Year" data-lang-si="සිංහල හා දෙමළ අලුත් අවුරුද්ද">Sinhala & Tamil New Year</h4>
-              <p class="text-gray-600 text-sm" data-lang-en="Mid-April festival with traditional games, sweets, and rituals marking the sun's transition to Aries." data-lang-si="සාම්ප්‍රදායික ක්‍රීඩා, මිහිර රස විඳින සහ අශ්විනී රාශියට සූර්යයාගේ සංක්‍රමණය සනිටුහන් කරන චාරිත්‍ර සහිත අප්‍රේල් මැද උත්සවය.">Mid-April festival with traditional games, sweets, and rituals marking the sun's transition to Aries.</p>
-            </div>
-          </div>
-          <div class="bg-white rounded-xl shadow-lg overflow-hidden card-3d">
-            <img src="https://source.unsplash.com/600x400/?sri-lanka,deepavali" class="w-full h-48 object-cover" alt="Deepavali">
-            <div class="p-6">
-              <h4 class="font-bold mb-2" data-lang-en="Deepavali" data-lang-si="දීපාවලි">Deepavali</h4>
-              <p class="text-gray-600 text-sm" data-lang-en="Hindu Festival of Lights celebrated with oil lamps, fireworks, and sharing of sweets among communities." data-lang-si="තෙල් පහන්, අවිචික්කු සහ සමාජයන් අතර මිහිර රස විඳීම සමඟ සමරනු ලබන හින්දු ආලෝක උත්සවය.">Hindu Festival of Lights celebrated with oil lamps, fireworks, and sharing of sweets among communities.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <!-- Cuisine Content -->
-      <div class="culture-content hidden" data-content="cuisine">
-        <div class="grid md:grid-cols-2 gap-8 mb-12">
-          <div>
-            <h3 class="text-2xl font-bold mb-4" data-lang-en="Flavors of Sri Lanka" data-lang-si="ශ්‍රී ලංකාවේ රසයන්">Flavors of Sri Lanka</h3>
-            <p class="text-gray-600 mb-4" data-lang-en="Sri Lankan cuisine is a fiery fusion of flavors influenced by its history as a spice island and its multicultural population. Rice and curry is the staple meal, with dozens of vegetable, meat, and seafood curries accompanied by sambols (spicy relishes) and pickles." data-lang-si="ශ්‍රී ලාංකික ආහාර වේල එහි ඉතිහාසයෙන් සහ බහු සංස්කෘතික ජනගහනයෙන් බලපෑ රසවත් මිශ්‍රණයකි. බත් සහ කරි යනු ප්‍රධාන ආහාරය වන අතර, එයට එළවලු, මස් සහ මුහුදු ආහාර කරි දුසිම් ගණනක් සමඟ සම්බෝල් (කුළුබඩු රස කැවිලි) සහ අච්චාරු ඇතුළත් වේ.">Sri Lankan cuisine is a fiery fusion of flavors influenced by its history as a spice island and its multicultural population. Rice and curry is the staple meal, with dozens of vegetable, meat, and seafood curries accompanied by sambols (spicy relishes) and pickles.</p>
-            <p class="text-gray-600" data-lang-en="Signature dishes include hoppers (bowl-shaped pancakes), kottu roti (chopped roti stir-fry), and lamprais (Dutch-influenced rice packet). The island is also famous for its tea and cinnamon." data-lang-si="අත්සන තෑගි අතරට හොපර්ස් (පාත්‍ර හැඩැති පැන්කේක්ස්), කොත්තු රොටි (කපා හරින ලද රොටි ව්‍යංජන), සහ ලම්ප්‍රයිස් (ලන්දේසි බලපෑම් සහිත බත් පැකට්ටු) ඇතුළත් වේ. දූපත තේ සහ කුරුඳු සඳහා ද ප්‍රසිද්ධය.">Signature dishes include hoppers (bowl-shaped pancakes), kottu roti (chopped roti stir-fry), and lamprais (Dutch-influenced rice packet). The island is also famous for its tea and cinnamon.</p>
-          </div>
-          <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-            <img src="https://source.unsplash.com/800x600/?sri-lanka,food" class="w-full h-full object-cover" alt="Sri Lankan Food">
-          </div>
-        </div>
-        
-        <div class="grid md:grid-cols-3 gap-8">
-          <div class="bg-white rounded-xl shadow-lg overflow-hidden card-3d">
-            <img src="https://source.unsplash.com/600x400/?sri-lanka,rice-and-curry" class="w-full h-48 object-cover" alt="Rice and Curry">
-            <div class="p-6">
-              <h4 class="font-bold mb-2" data-lang-en="Rice & Curry" data-lang-si="බත් සහ කරි">Rice & Curry</h4>
-              <p class="text-gray-600 text-sm" data-lang-en="The national dish featuring rice with multiple curries, sambols, and papadums." data-lang-si="බත් සහ බහු කරි, සම්බෝල් සහ පපඩම් සමඟ ජාතික තෑග්ග.">The national dish featuring rice with multiple curries, sambols, and papadums.</p>
-            </div>
-          </div>
-          <div class="bg-white rounded-xl shadow-lg overflow-hidden card-3d">
-            <img src="https://source.unsplash.com/600x400/?sri-lanka,hoppers" class="w-full h-48 object-cover" alt="Hoppers">
-            <div class="p-6">
-              <h4 class="font-bold mb-2" data-lang-en="Hoppers" data-lang-si="ආප්ප">Hoppers</h4>
-              <p class="text-gray-600 text-sm" data-lang-en="Crispy bowl-shaped pancakes made from fermented rice flour, often with an egg in the center." data-lang-si="පැසුණු බත් පිටි වලින් සාදන ලද පිළිස්සුණු පාත්‍ර හැඩැති පැන්කේක්ස්, බොහෝ විට මැද බිත්තරයක් සමඟ.">Crispy bowl-shaped pancakes made from fermented rice flour, often with an egg in the center.</p>
-            </div>
-          </div>
-          <div class="bg-white rounded-xl shadow-lg overflow-hidden card-3d">
-            <img src="https://source.unsplash.com/600x400/?sri-lanka,kottu" class="w-full h-48 object-cover" alt="Kottu Roti">
-            <div class="p-6">
-              <h4 class="font-bold mb-2" data-lang-en="Kottu Roti" data-lang-si="කොත්තු රොටි">Kottu Roti</h4>
-              <p class="text-gray-600 text-sm" data-lang-en="Chopped roti stir-fried with vegetables, eggs, and meat, accompanied by rhythmic chopping sounds." data-lang-si="කපා හරින ලද රොටි එළවලු, බිත්තර සහ මස් සමඟ ව්‍යංජනය කරන අතර එය තාලමය කප්පාදු ශබ්ද සමඟ ය.">Chopped roti stir-fried with vegetables, eggs, and meat, accompanied by rhythmic chopping sounds.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <!-- Arts Content -->
-      <div class="culture-content hidden" data-content="arts">
-        <div class="grid md:grid-cols-2 gap-8 mb-12">
-          <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-            <img src="https://source.unsplash.com/800x600/?sri-lanka,dance" class="w-full h-full object-cover" alt="Traditional Dance">
-          </div>
-          <div>
-            <h3 class="text-2xl font-bold mb-4" data-lang-en="Traditional Arts" data-lang-si="සාම්ප්‍රදායික කලා">Traditional Arts</h3>
-            <p class="text-gray-600 mb-4" data-lang-en="Sri Lanka has a rich tradition of arts including Kandyan dance, low-country dance, and mask dancing, each with distinct costumes, rhythms, and stories. Traditional drumming, especially the geta bera (drum ensemble), provides the energetic soundtrack to these performances." data-lang-si="ශ්‍රී ලංකාවට මහනුවර නැටුම්, පහත රට නැටුම් සහ මුහුණු වේස නැටුම් ඇතුළත් විවිධ වූ කලා සම්ප්‍රදායන් ඇති අතර, ඒ සෑම එකක්ම වෙනස් වේශ භෂා, තාල සහ කතා වලින් සමන්විත වේ. සාම්ප්‍රදායික බෙර වාදනය, විශේෂයෙන් ගෙට බෙර (බෙර සංගීත කණ්ඩායම), මෙම ප්‍රදර්ශන සඳහා ශක්තිමත් ශබ්ද පටිගත කිරීම් සපයයි.">Sri Lanka has a rich tradition of arts including Kandyan dance, low-country dance, and mask dancing, each with distinct costumes, rhythms, and stories. Traditional drumming, especially the geta bera (drum ensemble), provides the energetic soundtrack to these performances.</p>
-            <p class="text-gray-600" data-lang-en="The island is also known for its handicrafts like wood carving, brass work, lace-making, and batik textiles. Traditional puppetry (kolam) and folk theater (nadagam) are other unique art forms." data-lang-si="දූපත එහි ලී කැටයම්, පිත්තල වැඩ, ලේස් සෑදීම සහ බතික් රෙදිපිළි වැනි අත් කර්මාන්ත සඳහා ද ප්‍රසිද්ධය. සාම්ප්‍රදායික බොනික්කන් (කෝලම්) සහ ජන නාට්‍ය (නාඩගම්) අනෙකුත් අද්විතීය කලා ආකාර වේ.">The island is also known for its handicrafts like wood carving, brass work, lace-making, and batik textiles. Traditional puppetry (kolam) and folk theater (nadagam) are other unique art forms.</p>
-          </div>
-        </div>
-        
-        <div class="grid md:grid-cols-3 gap-8">
-          <div class="bg-white rounded-xl shadow-lg overflow-hidden card-3d">
-            <img src="https://source.unsplash.com/600x400/?sri-lanka,kandyan-dance" class="w-full h-48 object-cover" alt="Kandyan Dance">
-            <div class="p-6">
-              <h4 class="font-bold mb-2" data-lang-en="Kandyan Dance" data-lang-si="මහනුවර නැටුම්">Kandyan Dance</h4>
-              <p class="text-gray-600 text-sm" data-lang-en="Classical dance form from the hill country with elaborate costumes and acrobatic movements." data-lang-si="විස්තීර්ණ වේශ භෂා සහ ඇක්‍රොබැටික් චලනයන් සහිත කඳුකරයෙන් බිහිවූ සම්භාව්‍ය නර්තන ශෛලිය.">Classical dance form from the hill country with elaborate costumes and acrobatic movements.</p>
-            </div>
-          </div>
-          <div class="bg-white rounded-xl shadow-lg overflow-hidden card-3d">
-            <img src="https://source.unsplash.com/600x400/?sri-lanka,mask" class="w-full h-48 object-cover" alt="Mask Dance">
-            <div class="p-6">
-              <h4 class="font-bold mb-2" data-lang-en="Mask Dancing" data-lang-si="මුහුණු වේස නැටුම්">Mask Dancing</h4>
-              <p class="text-gray-600 text-sm" data-lang-en="Ritualistic dance form using vibrant masks to depict folk tales and exorcism rituals." data-lang-si="ජන කතා සහ භූත විදහා පාන චාරිත්‍ර නිරූපණය කිරීම සඳහා ජීවන්ත වර්ණවත් මුහුණු භාවිතා කරන චාරිත්‍රික නර්තන ශෛලිය.">Ritualistic dance form using vibrant masks to depict folk tales and exorcism rituals.</p>
-            </div>
-          </div>
-          <div class="bg-white rounded-xl shadow-lg overflow-hidden card-3d">
-            <img src="https://source.unsplash.com/600x400/?sri-lanka,batik" class="w-full h-48 object-cover" alt="Batik">
-            <div class="p-6">
-              <h4 class="font-bold mb-2" data-lang-en="Batik Art" data-lang-si="බතික් කලාව">Batik Art</h4>
-              <p class="text-gray-600 text-sm" data-lang-en="Traditional wax-resist dyeing technique creating colorful fabrics with intricate designs." data-lang-si="සංකීර්ණ නිර්මාණ සහිත වර්ණවත් රෙදිපිළි නිර්මාණය කරන සාම්ප්‍රදායික මීමැස්සන්-ප්‍රතිරෝධී ඇඹරුම් තාක්ෂණය.">Traditional wax-resist dyeing technique creating colorful fabrics with intricate designs.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <!-- Traditions Content -->
-      <div class="culture-content hidden" data-content="traditions">
-        <div class="grid md:grid-cols-2 gap-8 mb-12">
-          <div>
-            <h3 class="text-2xl font-bold mb-4" data-lang-en="Living Traditions" data-lang-si="ජීවත් වන පරම්පරා">Living Traditions</h3>
-            <p class="text-gray-600 mb-4" data-lang-en="Sri Lankan traditions are deeply rooted in its agricultural past and religious practices. The ancient practice of ayurveda (traditional medicine) continues to thrive, with many resorts offering authentic treatments. Village life preserves crafts like pottery, mat weaving, and basket making." data-lang-si="ශ්‍රී ලාංකික සම්ප්‍රදායන් එහි කෘෂිකාර්මික අතීතය සහ ආගමික භාවිතයන් වල ගැඹුරට මුල් බැස ඇත. ආයුර්වේද (සාම්ප්‍රදායික වෛද්‍ය විද්‍යාව) පැරණි පරිචය දිගටම සමෘද්ධිමත් වන අතර, බොහෝ ගෙවතු සත්‍ය චිකිත්සා සපයයි. ගම්බද ජීවිතය මැටි භාණ්ඩ, පොරෝ නූල් සහ බෑග් සෑදීම වැනි ශිල්ප කලා ආරක්ෂා කරයි.">Sri Lankan traditions are deeply rooted in its agricultural past and religious practices. The ancient practice of ayurveda (traditional medicine) continues to thrive, with many resorts offering authentic treatments. Village life preserves crafts like pottery, mat weaving, and basket making.</p>
-            <p class="text-gray-600" data-lang-en="Hospitality is a cornerstone of Sri Lankan culture, with visitors often welcomed into homes for tea or meals. Traditional ceremonies like weddings and coming-of-age rituals blend Buddhist, Hindu, and indigenous customs in colorful displays." data-lang-si="අමුත්තන්ට සැලකීම ශ්‍රී ලාංකික සංස්කෘතියේ කොනුගලකි, අමුත්තන් බොහෝ විට තේ හෝ ආහාර සඳහා නිවෙස්වලට සාදරයෙන් පිළිගනී. විවාහ සහ වයසට යාමේ චාරිත්‍ර වැනි සාම්ප්‍රදායික උත්සව බෞද්ධ, හින්දු සහ දේශීය සිරිත් වර්ණවත් ප්‍රදර්ශන වලින් මිශ්‍ර කරයි.">Hospitality is a cornerstone of Sri Lankan culture, with visitors often welcomed into homes for tea or meals. Traditional ceremonies like weddings and coming-of-age rituals blend Buddhist, Hindu, and indigenous customs in colorful displays.</p>
-          </div>
-          <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-            <img src="https://source.unsplash.com/800x600/?sri-lanka,village" class="w-full h-full object-cover" alt="Village Life">
-          </div>
-        </div>
-        
-        <div class="grid md:grid-cols-3 gap-8">
-          <div class="bg-white rounded-xl shadow-lg overflow-hidden card-3d">
-            <img src="https://source.unsplash.com/600x400/?sri-lanka,ayurveda" class="w-full h-48 object-cover" alt="Ayurveda">
-            <div class="p-6">
-              <h4 class="font-bold mb-2" data-lang-en="Ayurveda" data-lang-si="ආයුර්වේද">Ayurveda</h4>
-              <p class="text-gray-600 text-sm" data-lang-en="5,000-year-old holistic healing system using herbs, oils, and massage for wellness." data-lang-si="සුවය සඳහා සාම්ප්‍රදායික ඖෂධ, තෙල් සහ මසාජ් භාවිතා කරන වසර 5,000 ක පැරණි සමස්ත සුව ක්‍රමය.">5,000-year-old holistic healing system using herbs, oils, and massage for wellness.</p>
-            </div>
-          </div>
-          <div class="bg-white rounded-xl shadow-lg overflow-hidden card-3d">
-            <img src="https://source.unsplash.com/600x400/?sri-lanka,wedding" class="w-full h-48 object-cover" alt="Wedding">
-            <div class="p-6">
-              <h4 class="font-bold mb-2" data-lang-en="Weddings" data-lang-si="විවාහ">Weddings</h4>
-              <p class="text-gray-600 text-sm" data-lang-en="Colorful ceremonies blending Buddhist, Hindu, and Western traditions with unique rituals." data-lang-si="බෞද්ධ, හින්දු සහ බටහිර සම්ප්‍රදායන් අද්විතීය චාරිත්‍ර සමඟ මිශ්‍ර කරන වර්ණවත් උත්සව.">Colorful ceremonies blending Buddhist, Hindu, and Western traditions with unique rituals.</p>
-            </div>
-          </div>
-          <div class="bg-white rounded-xl shadow-lg overflow-hidden card-3d">
-            <img src="https://source.unsplash.com/600x400/?sri-lanka,handicraft" class="w-full h-48 object-cover" alt="Handicraft">
-            <div class="p-6">
-              <h4 class="font-bold mb-2" data-lang-en="Handicrafts" data-lang-si="අත් කර්මාන්ත">Handicrafts</h4>
-              <p class="text-gray-600 text-sm" data-lang-en="Traditional skills like wood carving, brass work, and lace-making preserved in villages." data-lang-si="ලී කැටයම්, පිත්තල වැඩ සහ ලේස් සෑදීම වැනි සාම්ප්‍රදායික කුසලතා ගම්මාන වල ආරක්ෂා කර ඇත.">Traditional skills like wood carving, brass work, and lace-making preserved in villages.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-    
-    <!-- Contact Section -->
-    <section id="contact" class="hidden-section" data-aos="fade-up">
-      <div class="grid md:grid-cols-2 gap-12">
-        <div>
-          <h2 class="text-3xl font-bold mb-6" data-lang-en="Get in Touch" data-lang-si="අප හා සම්බන්ධ වන්න">Get in Touch</h2>
-          <p class="text-gray-600 mb-8" data-lang-en="Ready to plan your Sri Lankan adventure? Contact our travel experts for personalized advice and custom itineraries." data-lang-si="ඔබේ ශ්‍රී ලාංකික ගවේෂණය සැලසුම් කිරීමට සූදානම්ද? අභිරුචි උපදෙස් සහ අභිරුචි ගමන් මාර්ග සඳහා අපගේ සංචාරක විශේෂඥයන් අමතන්න.">Ready to plan your Sri Lankan adventure? Contact our travel experts for personalized advice and custom itineraries.</p>
-          
-          <div class="space-y-6">
-            <div class="flex items-start">
-              <div class="bg-blue-100 p-3 rounded-full mr-4">
-                <i class="fas fa-map-marker-alt text-blue-900"></i>
-              </div>
-              <div>
-                <h4 class="font-bold" data-lang-en="Our Office" data-lang-si="අපේ කාර්යාලය">Our Office</h4>
-                <p class="text-gray-600">123 Galle Road, Colombo 03, Sri Lanka</p>
-              </div>
-            </div>
-            
-            <div class="flex items-start">
-              <div class="bg-blue-100 p-3 rounded-full mr-4">
-                <i class="fas fa-phone-alt text-blue-900"></i>
-              </div>
-              <div>
-                <h4 class="font-bold" data-lang-en="Call Us" data-lang-si="අමතන්න">Call Us</h4>
-                <p class="text-gray-600">+94 11 234 5678</p>
-              </div>
-            </div>
-            
-            <div class="flex items-start">
-              <div class="bg-blue-100 p-3 rounded-full mr-4">
-                <i class="fas fa-envelope text-blue-900"></i>
-              </div>
-              <div>
-                <h4 class="font-bold" data-lang-en="Email Us" data-lang-si="ඊමේල් කරන්න">Email Us</h4>
-                <p class="text-gray-600">info@lankaedgetravels.com</p>
-              </div>
-            </div>
-            
-            <div class="flex items-start">
-              <div class="bg-blue-100 p-3 rounded-full mr-4">
-                <i class="fas fa-clock text-blue-900"></i>
-              </div>
-              <div>
-                <h4 class="font-bold" data-lang-en="Working Hours" data-lang-si="වැඩ කරන වේලාවන්">Working Hours</h4>
-                <p class="text-gray-600">Monday - Friday: 9:00 AM - 6:00 PM<br>Saturday: 9:00 AM - 1:00 PM</p>
-              </div>
-            </div>
-          </div>
-          
-          <div class="mt-8">
-            <h4 class="font-bold mb-4" data-lang-en="Follow Us" data-lang-si="අපව අනුගමනය කරන්න">Follow Us</h4>
-            <div class="flex space-x-4">
-              <a href="#" class="bg-blue-100 p-3 rounded-full hover:bg-blue-200 transition-all">
-                <i class="fab fa-facebook-f text-blue-900"></i>
-              </a>
-              <a href="#" class="bg-blue-100 p-3 rounded-full hover:bg-blue-200 transition-all">
-                <i class="fab fa-instagram text-blue-900"></i>
-              </a>
-              <a href="#" class="bg-blue-100 p-3 rounded-full hover:bg-blue-200 transition-all">
-                <i class="fab fa-twitter text-blue-900"></i>
-              </a>
-              <a href="#" class="bg-blue-100 p-3 rounded-full hover:bg-blue-200 transition-all">
-                <i class="fab fa-youtube text-blue-900"></i>
-              </a>
-            </div>
-          </div>
-        </div>
-        
-        <div class="bg-white rounded-xl shadow-lg p-8">
-          <h3 class="text-2xl font-bold mb-6" data-lang-en="Send a Message" data-lang-si="පණිවුඩයක් යවන්න">Send a Message</h3>
-          <form>
-           <!-- Use ONLY ONE form tag with your Google Apps Script URL -->
-<form 
-  action="https://script.google.com/macros/s/AKfycbxFvPdHLEfUmlBrs7YxC-bb5q4WJb5_SQEcuhj3mmskOwzQ94LhSKKu_ZXvxLTacUe7/exec" 
-  method="POST"
-  id="contact-form"
->
-  <input type="text" name="name" placeholder="Name" required>
-  <input type="email" name="email" placeholder="Email" required>
-  <textarea name="message" placeholder="Message" required></textarea>
-  
-  <!-- Add a hidden field for spam prevention -->
-  <input type="hidden" name="_gotcha" style="display:none">
-  
-  <button type="submit">Send</button>
-</form>
+    </header>
 
-<!-- Add success/error messages -->
-<div id="form-status" style="display:none"></div>
-
-<!-- Basic submission feedback script -->
-<script>
-  document.getElementById("contact-form").addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const form = e.target;
-    const status = document.getElementById("form-status");
-    
-    try {
-      const response = await fetch(form.action, {
-        method: "POST",
-        body: new FormData(form),
-      });
-      
-      if (response.ok) {
-        status.textContent = "Message sent successfully!";
-        form.reset();
-      } else {
-        throw new Error("Failed to send");
-      }
-    } catch (error) {
-      status.textContent = "Error sending message. Please email us directly.";
-    }
-    
-    status.style.display = "block";
-  });
-</script>
-            </form>
-          </form>
+    <!-- Hero Section -->
+    <section class="hero-bg h-screen flex items-center pt-16">
+        <div class="container mx-auto px-4 text-white" data-aos="fade-up">
+            <h1 class="text-4xl md:text-6xl font-bold mb-6">Discover Sri Lanka's <br><span class="text-orange-400">Hidden Treasures</span></h1>
+            <p class="text-xl md:text-2xl mb-8 max-w-2xl">Curated luxury experiences showcasing the island's culture, wildlife, and breathtaking landscapes</p>
+            <div class="flex flex-wrap gap-4">
+                <a href="#tours" class="bg-orange-500 hover:bg-orange-600 text-white px-8 py-4 rounded-full font-bold transition duration-300">Explore Tours</a>
+                <a href="#contact" class="bg-transparent border-2 border-white hover:bg-white hover:text-blue-900 text-white px-8 py-4 rounded-full font-bold transition duration-300">Custom Itinerary</a>
+            </div>
         </div>
-      </div>
     </section>
-  </main>
-  
-  <!-- Newsletter -->
-  <section class="bg-gradient-to-r from-blue-900 to-blue-700 text-white py-12 mt-12">
-    <div class="container mx-auto px-4 text-center">
-      <h2 class="text-3xl font-bold mb-4" data-lang-en="Stay Updated" data-lang-si="යාවත්කාලීනව රැඳෙන්න">Stay Updated</h2>
-      <p class="mb-6 max-w-2xl mx-auto" data-lang-en="Subscribe to our newsletter for travel tips, special offers, and Sri Lankan adventures." data-lang-si="සංචාර උපදෙස්, විශේෂ පිරිනැමීම් සහ ශ්‍රී ලාංකික ගවේෂණ සඳහා අපගේ පුවත් පත්‍රිකාවට දායක වන්න.">Subscribe to our newsletter for travel tips, special offers, and Sri Lankan adventures.</p>
-      <div class="max-w-md mx-auto flex">
-        <input type="email" placeholder="Your email address" class="flex-grow px-4 py-3 rounded-l-lg focus:outline-none text-gray-900">
-        <button class="bg-orange-500 px-6 py-3 rounded-r-lg hover:bg-orange-600 transition-all font-medium">
-          <span data-lang-en="Subscribe" data-lang-si="දායක වන්න">Subscribe</span>
-        </button>
-      </div>
-    </div>
-  </section>
-  
-  <!-- Footer -->
-  <footer class="bg-gray-900 text-gray-300 py-12">
-    <div class="container mx-auto px-4">
-      <div class="grid md:grid-cols-4 gap-8">
-        <div>
-          <h3 class="text-xl font-bold text-white mb-4">Lanka<span class="text-orange-400">Edge</span></h3>
-          <p class="mb-4" data-lang-en="Your trusted guide to authentic Sri Lankan travel experiences." data-lang-si="සත්‍ය ශ්‍රී ලාංකික සංචාර අත්දැකීම් සඳහා ඔබේ විශ්වාසදායක මගපෙන්වීම.">Your trusted guide to authentic Sri Lankan travel experiences.</p>
-          <div class="flex space-x-4">
-            <a href="#" class="hover:text-white transition-all"><i class="fab fa-facebook-f"></i></a>
-            <a href="#" class="hover:text-white transition-all"><i class="fab fa-instagram"></i></a>
-            <a href="#" class="hover:text-white transition-all"><i class="fab fa-twitter"></i></a>
-            <a href="#" class="hover:text-white transition-all"><i class="fab fa-youtube"></i></a>
-          </div>
+
+    <!-- Why Choose Us -->
+    <section class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16" data-aos="fade-up">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">Why Choose Lanka Edge</h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">Authentic experiences crafted by local experts with 15+ years in luxury travel</p>
+            </div>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="bg-white p-8 rounded-xl shadow-lg" data-aos="fade-up" data-aos-delay="100">
+                    <div class="text-orange-500 text-4xl mb-4">
+                        <i class="fas fa-map-marked-alt"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Insider Access</h3>
+                    <p class="text-gray-600">Exclusive entry to hidden gems and local communities beyond tourist routes</p>
+                </div>
+                <div class="bg-white p-8 rounded-xl shadow-lg" data-aos="fade-up" data-aos-delay="200">
+                    <div class="text-orange-500 text-4xl mb-4">
+                        <i class="fas fa-hand-holding-heart"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Sustainable Travel</h3>
+                    <p class="text-gray-600">Ethical tourism supporting local economies and conservation efforts</p>
+                </div>
+                <div class="bg-white p-8 rounded-xl shadow-lg" data-aos="fade-up" data-aos-delay="300">
+                    <div class="text-orange-500 text-4xl mb-4">
+                        <i class="fas fa-concierge-bell"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Bespoke Service</h3>
+                    <p class="text-gray-600">24/7 concierge and personalized itineraries for your perfect journey</p>
+                </div>
+            </div>
         </div>
-        
-        <div>
-          <h4 class="text-lg font-semibold text-white mb-4" data-lang-en="Quick Links" data-lang-si="ක්ෂණික සබැඳි">Quick Links</h4>
-          <ul class="space-y-2">
-            <li><a href="#" class="hover:text-white transition-all" data-lang-en="Home" data-lang-si="මුල් පිටුව">Home</a></li>
-            <li><a href="#" class="hover:text-white transition-all" data-lang-en="About Us" data-lang-si="අපි ගැන">About Us</a></li>
-            <li><a href="#" class="hover:text-white transition-all" data-lang-en="Tours" data-lang-si="සංචාර">Tours</a></li>
-            <li><a href="#" class="hover:text-white transition-all" data-lang-en="Destinations" data-lang-si="ගමනාන්ත">Destinations</a></li>
-            <li><a href="#" class="hover:text-white transition-all" data-lang-en="Contact" data-lang-si="සම්බන්ධ කරන්න">Contact</a></li>
-          </ul>
+    </section>
+
+    <!-- Popular Tours -->
+    <section id="tours" class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16" data-aos="fade-up">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">Signature Sri Lanka Tours</h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">Handcrafted journeys blending culture, adventure, and relaxation</p>
+            </div>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Tour 1 -->
+                <div class="tour-card bg-white rounded-xl overflow-hidden shadow-lg" data-aos="fade-up">
+                    <div class="relative overflow-hidden h-64">
+                        <img src="https://images.unsplash.com/photo-1562613521-9e2c0d4a315d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" 
+                             alt="Cultural Triangle Tour" 
+                             class="tour-image w-full h-full object-cover transition duration-500">
+                        <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4 text-white">
+                            <span class="bg-orange-500 text-xs font-bold px-3 py-1 rounded-full">BESTSELLER</span>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2">Cultural Triangle Explorer</h3>
+                        <div class="flex items-center text-gray-600 text-sm mb-4">
+                            <i class="fas fa-map-marker-alt mr-1 text-orange-500"></i>
+                            Sigiriya, Anuradhapura, Polonnaruwa
+                        </div>
+                        <p class="text-gray-600 mb-4">5-day journey through ancient kingdoms with private guides and luxury stays</p>
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <span class="text-blue-900 font-bold text-lg">$1,250</span>
+                                <span class="text-gray-500 text-sm ml-1">per person</span>
+                            </div>
+                            <a href="#" class="text-orange-500 hover:text-orange-600 font-bold">Details →</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tour 2 -->
+                <div class="tour-card bg-white rounded-xl overflow-hidden shadow-lg" data-aos="fade-up" data-aos-delay="100">
+                    <div class="relative overflow-hidden h-64">
+                        <img src="https://images.unsplash.com/photo-1582139329536-e7284fece509?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2080&q=80" 
+                             alt="Wildlife Safari" 
+                             class="tour-image w-full h-full object-cover transition duration-500">
+                        <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4 text-white">
+                            <span class="bg-blue-500 text-xs font-bold px-3 py-1 rounded-full">POPULAR</span>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2">Premium Wildlife Safari</h3>
+                        <div class="flex items-center text-gray-600 text-sm mb-4">
+                            <i class="fas fa-map-marker-alt mr-1 text-orange-500"></i>
+                            Yala, Wilpattu, Udawalawe
+                        </div>
+                        <p class="text-gray-600 mb-4">7-day luxury safari with expert trackers and eco-friendly lodges</p>
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <span class="text-blue-900 font-bold text-lg">$1,850</span>
+                                <span class="text-gray-500 text-sm ml-1">per person</span>
+                            </div>
+                            <a href="#" class="text-orange-500 hover:text-orange-600 font-bold">Details →</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tour 3 -->
+                <div class="tour-card bg-white rounded-xl overflow-hidden shadow-lg" data-aos="fade-up" data-aos-delay="200">
+                    <div class="relative overflow-hidden h-64">
+                        <img src="https://images.unsplash.com/photo-1506929562872-bb421503ef21?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2080&q=80" 
+                             alt="Tea Country Tour" 
+                             class="tour-image w-full h-full object-cover transition duration-500">
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2">Tea Trails & Mountain Retreat</h3>
+                        <div class="flex items-center text-gray-600 text-sm mb-4">
+                            <i class="fas fa-map-marker-alt mr-1 text-orange-500"></i>
+                            Nuwara Eliya, Ella, Haputale
+                        </div>
+                        <p class="text-gray-600 mb-4">4-day scenic journey through tea plantations with colonial bungalow stays</p>
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <span class="text-blue-900 font-bold text-lg">$980</span>
+                                <span class="text-gray-500 text-sm ml-1">per person</span>
+                            </div>
+                            <a href="#" class="text-orange-500 hover:text-orange-600 font-bold">Details →</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center mt-12">
+                <a href="#tours" class="inline-block bg-blue-900 hover:bg-blue-800 text-white px-8 py-4 rounded-full font-bold transition duration-300">
+                    View All 12+ Tours
+                </a>
+            </div>
         </div>
-        
-        <div>
-          <h4 class="text-lg font-semibold text-white mb-4" data-lang-en="Support" data-lang-si="සහාය">Support</h4>
-          <ul class="space-y-2">
-            <li><a href="#" class="hover:text-white transition-all" data-lang-en="FAQ" data-lang-si="නිති අසන පැණ">FAQ</a></li>
-            <li><a href="#" class="hover:text-white transition-all" data-lang-en="Privacy Policy" data-lang-si="රහස්‍යතා ප්‍රතිපත්තිය">Privacy Policy</a></li>
-            <li><a href="#" class="hover:text-white transition-all" data-lang-en="Terms & Conditions" data-lang-si="නියම සහ කොන්දේසි">Terms & Conditions</a></li>
-            <li><a href="#" class="hover:text-white transition-all" data-lang-en="Booking Policy" data-lang-si="වෙන්කිරීමේ ප්‍රතිපත්තිය">Booking Policy</a></li>
-          </ul>
+    </section>
+
+    <!-- Unique Experiences -->
+    <section id="experiences" class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16" data-aos="fade-up">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">Beyond Ordinary Experiences</h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">Moments you won't find in guidebooks</p>
+            </div>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="relative rounded-xl overflow-hidden h-96" data-aos="fade-up">
+                    <img src="https://images.unsplash.com/photo-1566438480900-0609be27a4be?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2098&q=80" 
+                         alt="Private Temple Visit" 
+                         class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent flex flex-col justify-end p-6 text-white">
+                        <h3 class="text-xl font-bold mb-2">Sunrise at Sigiriya</h3>
+                        <p>Private dawn climb before crowds arrive</p>
+                    </div>
+                </div>
+                <div class="relative rounded-xl overflow-hidden h-96" data-aos="fade-up" data-aos-delay="100">
+                    <img src="https://images.unsplash.com/photo-1591703291603-2150887a3db5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" 
+                         alt="Village Cooking Class" 
+                         class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent flex flex-col justify-end p-6 text-white">
+                        <h3 class="text-xl font-bold mb-2">Spice Garden Cooking</h3>
+                        <p>Harvest ingredients and cook with a local family</p>
+                    </div>
+                </div>
+                <div class="relative rounded-xl overflow-hidden h-96" data-aos="fade-up" data-aos-delay="200">
+                    <img src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" 
+                         alt="Whale Watching" 
+                         class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent flex flex-col justify-end p-6 text-white">
+                        <h3 class="text-xl font-bold mb-2">Blue Whale Expedition</h3>
+                        <p>Ethical marine encounters with researchers</p>
+                    </div>
+                </div>
+            </div>
         </div>
-        
-        <div>
-          <h4 class="text-lg font-semibold text-white mb-4" data-lang-en="Contact Info" data-lang-si="සම්බන්ධතා තොරතුරු">Contact Info</h4>
-          <ul class="space-y-2">
-            <li class="flex items-start">
-              <i class="fas fa-map-marker-alt mt-1 mr-2 text-orange-400"></i>
-              <span>123 Galle Road, Colombo 03, Sri Lanka</span>
-            </li>
-            <li class="flex items-start">
-              <i class="fas fa-phone-alt mt-1 mr-2 text-orange-400"></i>
-              <span>+94 11 234 5678</span>
-            </li>
-            <li class="flex items-start">
-              <i class="fas fa-envelope mt-1 mr-2 text-orange-400"></i>
-              <span>info@lankaedgetravels.com</span>
-            </li>
-          </ul>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="py-16 bg-blue-900 text-white">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16" data-aos="fade-up">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">Traveler Stories</h2>
+                <p class="text-xl text-blue-200 max-w-3xl mx-auto">What our guests say about their Lanka Edge journey</p>
+            </div>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="testimonial-card bg-white text-gray-800 p-8 rounded-xl" data-aos="fade-up">
+                    <div class="flex items-center mb-4">
+                        <img src="https://randomuser.me/api/portraits/women/45.jpg" class="w-12 h-12 rounded-full mr-4" alt="Sarah">
+                        <div>
+                            <h4 class="font-semibold">Sarah & Mark</h4>
+                            <div class="flex text-yellow-400 text-sm">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="italic">"Our guide revealed a Sri Lanka we never would have discovered alone - from hidden temples to the best street food spots. Every detail was perfect."</p>
+                </div>
+                <div class="testimonial-card bg-white text-gray-800 p-8 rounded-xl" data-aos="fade-up" data-aos-delay="100">
+                    <div class="flex items-center mb-4">
+                        <img src="https://randomuser.me/api/portraits/men/32.jpg" class="w-12 h-12 rounded-full mr-4" alt="James">
+                        <div>
+                            <h4 class="font-semibold">James Family</h4>
+                            <div class="flex text-yellow-400 text-sm">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="italic">"They customized a kid-friendly itinerary that kept our teens engaged while showing us the real Sri Lanka. The wildlife safari was unforgettable!"</p>
+                </div>
+                <div class="testimonial-card bg-white text-gray-800 p-8 rounded-xl" data-aos="fade-up" data-aos-delay="200">
+                    <div class="flex items-center mb-4">
+                        <img src="https://randomuser.me/api/portraits/women/68.jpg" class="w-12 h-12 rounded-full mr-4" alt="Priya">
+                        <div>
+                            <h4 class="font-semibold">Priya & Arjun</h4>
+                            <div class="flex text-yellow-400 text-sm">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star-half-alt"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="italic">"For our honeymoon, they created magical private dinners on beaches and in ancient ruins. The attention to detail was extraordinary."</p>
+                </div>
+            </div>
         </div>
-      </div>
-      
-      <div class="border-t border-gray-800 mt-12 pt-8 text-center">
-        <p data-lang-en="© 2023 Lanka Edge Travels. All rights reserved." data-lang-si="© 2023 ලංකා එජ් ට්‍රැවල්ස්. සියලුම හිමිකම් ඇවිරිණි.">© 2023 Lanka Edge Travels. All rights reserved.</p>
-      </div>
-    </div>
-  </footer>
-  
-  <!-- Back to Top Button -->
-  <button id="back-to-top" class="fixed bottom-6 right-6 bg-blue-900 text-white p-3 rounded-full shadow-lg hover:bg-blue-800 transition-all hidden">
-    <i class="fas fa-arrow-up"></i>
-  </button>
-  
-  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-  <script>
-    // Initialize AOS animation library
-    AOS.init({
-      duration: 800,
-      easing: 'ease-in-out',
-      once: true
-    });
-    
-    // Page navigation functionality
-    function showPage(pageId) {
-      // Hide all sections
-      document.querySelectorAll('.active-section').forEach(section => {
-        section.classList.remove('active-section');
-        section.classList.add('hidden-section');
-      });
-      
-      // Show selected section
-      document.getElementById(pageId).classList.remove('hidden-section');
-      document.getElementById(pageId).classList.add('active-section');
-      
-      // Update active nav link
-      document.querySelectorAll('.nav-link').forEach(link => {
-        link.classList.remove('active');
-        if (link.getAttribute('data-page') === pageId) {
-          link.classList.add('active');
-        }
-      });
-      
-      // Update active mobile nav link
-      document.querySelectorAll('.nav-link-mobile').forEach(link => {
-        link.classList.remove('active');
-        if (link.getAttribute('data-page') === pageId) {
-          link.classList.add('active');
-        }
-      });
-      
-      // Scroll to top
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-    
-    // Language switch functionality
-    function switchLanguage(lang) {
-      // Update active language button
-      document.querySelectorAll('.language-btn').forEach(btn => {
-        btn.classList.remove('active');
-      });
-      document.getElementById(`lang-${lang}`).classList.add('active');
-      
-      // Update all elements with language data attributes
-      document.querySelectorAll('[data-lang-en], [data-lang-si]').forEach(element => {
-        if (element.getAttribute(`data-lang-${lang}`)) {
-          element.textContent = element.getAttribute(`data-lang-${lang}`);
-        }
-      });
-    }
-    
-    // Mobile menu toggle
-    document.getElementById('mobile-menu-button').addEventListener('click', function() {
-      const menu = document.getElementById('mobile-menu');
-      menu.classList.toggle('hidden');
-    });
-    
-    // Back to top button
-    window.addEventListener('scroll', function() {
-      const backToTopButton = document.getElementById('back-to-top');
-      if (window.pageYOffset > 300) {
-        backToTopButton.classList.remove('hidden');
-      } else {
-        backToTopButton.classList.add('hidden');
-      }
-    });
-    
-    document.getElementById('back-to-top').addEventListener('click', function() {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
-    
-    // Destination category filtering
-    document.querySelectorAll('.destination-category').forEach(button => {
-      button.addEventListener('click', function() {
-        const category = this.getAttribute('data-category');
-        
-        // Update active category button
-        document.querySelectorAll('.destination-category').forEach(btn => {
-          btn.classList.remove('active');
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-16 bg-orange-50">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-3xl md:text-4xl font-bold mb-6" data-aos="fade-up">Ready for Your Sri Lanka Adventure?</h2>
+            <p class="text-xl text-gray-700 mb-8 max-w-3xl mx-auto" data-aos="fade-up" data-aos-delay="100">Let's craft your perfect itinerary with local expertise</p>
+            <div class="flex flex-wrap justify-center gap-4">
+                <a href="#contact" class="bg-orange-500 hover:bg-orange-600 text-white px-8 py-4 rounded-full font-bold transition duration-300" data-aos="fade-up" data-aos-delay="200">
+                    Get a Free Consultation
+                </a>
+                <a href="tel:+94112345678" class="bg-white hover:bg-gray-100 text-blue-900 border-2 border-blue-900 px-8 py-4 rounded-full font-bold transition duration-300" data-aos="fade-up" data-aos-delay="300">
+                    <i class="fas fa-phone-alt mr-2"></i> Call +94 11 234 5678
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-300 py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold text-white mb-4">Lanka<span class="text-orange-400">Edge</span>Travels</h3>
+                    <p class="mb-4">Crafting unforgettable Sri Lankan journeys since 2010</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="hover:text-white"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="hover:text-white"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="hover:text-white"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="hover:text-white"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold text-white mb-4">Quick Links</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="hover:text-white">Home</a></li>
+                        <li><a href="#tours" class="hover:text-white">Tours</a></li>
+                        <li><a href="#experiences" class="hover:text-white">Experiences</a></li>
+                        <li><a href="#about" class="hover:text-white">About Us</a></li>
+                        <li><a href="#contact" class="hover:text-white">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold text-white mb-4">Support</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="hover:text-white">FAQ</a></li>
+                        <li><a href="#" class="hover:text-white">Booking Policy</a></li>
+                        <li><a href="#" class="hover:text-white">Privacy Policy</a></li>
+                        <li><a href="#" class="hover:text-white">Terms & Conditions</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold text-white mb-4">Contact Us</h4>
+                    <ul class="space-y-2">
+                        <li class="flex items-start">
+                            <i class="fas fa-map-marker-alt mt-1 mr-2 text-orange-400"></i>
+                            <span>123 Matara Road, Galle, Sri Lanka</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-phone-alt mt-1 mr-2 text-orange-400"></i>
+                            <span>+94 11 234 5678</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-envelope mt-1 mr-2 text-orange-400"></i>
+                            <span>test@lankaedgetravels.com</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 mt-12 pt-8 text-center">
+                <p>© 2025 Lanka Edge Travels. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        // Initialize animations
+        AOS.init({
+            duration: 800,
+            once: true
         });
-        this.classList.add('active');
-        
-        // Filter destination cards
-        document.querySelectorAll('.destination-card').forEach(card => {
-          if (category === 'all' || card.getAttribute('data-category') === category) {
-            card.style.display = 'block';
-          } else {
-            card.style.display = 'none';
-          }
-        });
-      });
-    });
-    
-    // Culture tab switching
-    document.querySelectorAll('.culture-tab').forEach(button => {
-      button.addEventListener('click', function() {
-        const tab = this.getAttribute('data-tab');
-        
-        // Update active tab
-        document.querySelectorAll('.culture-tab').forEach(btn => {
-          btn.classList.remove('active');
-        });
-        this.classList.add('active');
-        
-        // Show corresponding content
-        document.querySelectorAll('.culture-content').forEach(content => {
-          content.classList.add('hidden');
-          if (content.getAttribute('data-content') === tab) {
-            content.classList.remove('hidden');
-          }
-        });
-      });
-    });
-    
-    // Simple 3D background with Three.js
-    const threejsBackground = document.getElementById('threejs-bg');
-    if (threejsBackground) {
-      const scene = new THREE.Scene();
-      const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-      const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-      renderer.setSize(window.innerWidth, window.innerHeight);
-      renderer.setClearColor(0x000000, 0);
-      threejsBackground.appendChild(renderer.domElement);
-      
-      // Create particles
-      const particlesGeometry = new THREE.BufferGeometry();
-      const particleCount = 1000;
-      
-      const posArray = new Float32Array(particleCount * 3);
-      for(let i = 0; i < particleCount * 3; i++) {
-        posArray[i] = (Math.random() - 0.5) * 10;
-      }
-      
-      particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
-      
-      const particlesMaterial = new THREE.PointsMaterial({
-        size: 0.02,
-        color: 0x2563eb,
-        transparent: true,
-        opacity: 0.8
-      });
-      
-      const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
-      scene.add(particlesMesh);
-      
-      camera.position.z = 3;
-      
-      // Animation loop
-      function animate() {
-        requestAnimationFrame(animate);
-        
-        particlesMesh.rotation.x += 0.0005;
-        particlesMesh.rotation.y += 0.0005;
-        
-        renderer.render(scene, camera);
-      }
-      
-      animate();
-      
-      // Handle window resize
-      window.addEventListener('resize', function() {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(window.innerWidth, window.innerHeight);
-      });
-    }
-    
-    // Interactive p5.js element could be added here
-    // For example, a canvas with Sri Lanka's outline that responds to mouse movement
-  </script>
+
+        // Mobile menu toggle would go here
+        // Form handling would go here
+    </script>
 </body>
 </html>
